@@ -8,6 +8,19 @@ GitHub has a powerful API that enables developers to easily access GitHub data. 
 
 In this project, we create a simple web service that listens for organization events to know when a repository has been created. When the repository is created, please automate the protection of the main branch. Notify yourself with an @mention in an issue within the repository that outlines the protections that were added.
 
+### Solving the Problem
+
+My initial thought was to use a GitHub Action to protect the main branch.
+
+However, this had to pitfalls: 
+
+ 1. GitHub Actions are not triggered by the `repository.created` event.
+ 2. The Action would not exist in the repository by default, unless a template repository was used.
+
+So instead I created a GitHub App that listens for the `repository.created` event.
+
+When the event is received, we use the GitHub API to protect the main branch and then create an issue in the repository.
+
 ### The Webhook URL
 
 In developing the app, we use https://smee.io/ to create a webhook URL. This URL is used to receive events from GitHub. The URL is then added to the GitHub App settings.
@@ -47,6 +60,7 @@ npm install dotenv
 ## References:
 
 - [Building a GitHub App that responds to webhook events](https://docs.github.com/en/apps/creating-github-apps/writing-code-for-a-github-app/building-a-github-app-that-responds-to-webhook-events)
+- [SMEE Client](https://smee.io/)
 - [Octokit](https://github.com/octokit/octokit.js/#readme)
 - [Dotenv](https://www.npmjs.com/package/dotenv)
 - [GitHub Webhooks](https://docs.github.com/en/webhooks)
