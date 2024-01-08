@@ -4,6 +4,19 @@ import {createNodeMiddleware} from "@octokit/webhooks";
 import fs from "fs";
 import http from "http";
 
+import { DefaultAzureCredential } from "@azure/identity";
+import { SecretClient } from "@azure/keyvault-secrets";
+
+const credential = new DefaultAzureCredential();
+const vaultName = "Auto-Branch-Protect-KV";
+const url = `https://auto-branch-protect-kv.vault.azure.net/keys/Auto-Branch-Protect-Prtivate-Key/45aa82c33832413db46210e954245657`;
+
+const client = new SecretClient(url, credential);
+const secretName = "Auto-Branch-Protect-Prtivate-Key";
+client.getSecret(secretName).then((result) => {
+    process.env.YOUR_ENV_VARIABLE = result.value;
+});
+
 dotenv.config();
 
 const appId = process.env.APP_ID;
