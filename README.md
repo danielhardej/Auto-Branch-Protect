@@ -19,9 +19,37 @@ import secrets
 secrets.token_hex(16)
 ```
 
+## Writing the Code
+
+### Installing dependencies
+
+This app uses NPM and GitHub's Octokit module to handle webhook events and make API requests.
+
+We install dependencies with the following steps:
+
+1. Create a `package.json` file using the npm defaults.
+
+```
+npm init --yes
+```
+
+2. Install Octokit:
+
+```
+npm install octokit
+```
+
+3. dotenv module to read information about your app from a .env file:
+```
+npm install dotenv
+```
+
 ## References:
 
 - [Building a GitHub App that responds to webhook events](https://docs.github.com/en/apps/creating-github-apps/writing-code-for-a-github-app/building-a-github-app-that-responds-to-webhook-events)
+- [Octokit](https://github.com/octokit/octokit.js/#readme)
+- [Dotenv](https://www.npmjs.com/package/dotenv)
+- [GitHub Webhooks](https://docs.github.com/en/webhooks)
 - [GitHub API](https://docs.github.com/en/rest)
 - [GitHub API - Create a branch protection rule](https://docs.github.com/en/rest/reference/repos#create-a-branch-protection-rule)
 - [GitHub API - Create an issue](https://docs.github.com/en/rest/reference/issues#create-an-issue)

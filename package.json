@@ -1,0 +1,19 @@
+{
+  "name": "auto-branch-protect",
+  "version": "1.0.0",
+  "description": "## A GitHub App to automatically protect the main branches in an organisation's repos.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "octokit": "^3.1.2"
+  },
+  "devDependencies": {
+    "smee-client": "^2.0.0"
+  }
+}
