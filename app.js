@@ -1,36 +1,20 @@
 import dotenv from "dotenv";
 import {App} from "octokit";
 import {createNodeMiddleware} from "@octokit/webhooks";
-import fs from "fs";
 import http from "http";
-
-import { DefaultAzureCredential } from "@azure/identity";
-import { SecretClient } from "@azure/keyvault-secrets";
-
-const credential = new DefaultAzureCredential();
-const vaultName = "Auto-Branch-Protect-KV";
-const url = `https://auto-branch-protect-kv.vault.azure.net/keys/Auto-Branch-Protect-Prtivate-Key/45aa82c33832413db46210e954245657`;
-
-const client = new SecretClient(url, credential);
-const secretName = "Auto-Branch-Protect-Prtivate-Key";
-client.getSecret(secretName).then((result) => {
-    process.env.YOUR_ENV_VARIABLE = result.value;
-});
 
 dotenv.config();
 
 const appId = process.env.APP_ID;
 const webhookSecret = process.env.WEBHOOK_SECRET;
-const privateKeyPath = process.env.PRIVATE_KEY_PATH;
-
-const privateKey = fs.readFileSync(privateKeyPath, "utf8");
+const privateKey = process.env.PRIVATE_KEY_PATH;
 
 const app = new App({
-    appId: appId,
-    privateKey: privateKey,
-    webhooks: {
-        secret: webhookSecret
-    },
+  appId: appId,
+  privateKey: privateKey,
+  webhooks: {
+    secret: webhookSecret
+  },
 });
 
 // This function will create branch protections for the main branch of a repository when it is created and create a new issue with a message
@@ -95,6 +79,14 @@ async function handleRepoCreated({ octokit, payload }) {
                 repo: repo,
                 title: "Main branch protection",
                 body: `@${owner}, the main branch has been protected with the following settings:\n\n- Require linear history: true\n- Allow force pushes: false\n- Allow deletions: false`,
+            });
+
+            // assign issue to the owner of the repository
+            await octokit.request("POST /repos/{owner}/{repo}/issues/{issue_number}/assignees", {
+                owner: owner,
+                repo: repo,
+                issue_number: 1,
+                assignees: [owner],
             });
         }
         
