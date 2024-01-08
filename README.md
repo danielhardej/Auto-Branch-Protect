@@ -34,7 +34,7 @@ When the event is received, we use the GitHub API to protect the main branch and
 3. Start the app server with the following command in the terminal in your Codespace or computer:
 
 ```bash
-npx smee -u https://smee.io/ZWyucxpozGme49M t http://localhost:3000/api/webhook
+npx smee -u https://smee.io/ZWyucxpozGme49M -t http://localhost:3000/api/webhook
 ```
 
 4. In a new terminal window, run the app:
