@@ -20,9 +20,6 @@ const app = new App({
     },
 });
 
-// This is the message that will be posted to the new issue when a new repository is created within the organisation
-const messageForNewIssues = "Thanks for creating a new repository! Your repository's main branch is being automatically protected! Your project is now ready to go.";
-
 // This function will create branch protections for the main branch of a repository when it is created and create a new issue with a message
 // describing the protections that have been applied
 async function handleRepoCreated({ octokit, payload }) {
@@ -32,30 +29,64 @@ async function handleRepoCreated({ octokit, payload }) {
     const repo = payload.repository.name;
 
     try {
-        // Protect the main branch
-        await octokit.request("PUT /repos/{owner}/{repo}/branches/{branch}/protection", {
-            owner: owner,
-            repo: repo,
-            branch: "main",
-            headers: {
-                "x-github-api-version": "2022-11-28",
-            },
-            required_status_checks: null,
-            enforce_admins: null,
-            required_pull_request_reviews: null,
-            restrictions: null,
-            required_linear_history: true,
-            allow_force_pushes: false,
-            allow_deletions: false,
-        });
+        // Protect the main branch of the repository
+        if (payload.repository.owner.type === "Organization") {
+            await octokit.request("PUT /repos/{owner}/{repo}/branches/{branch}/protection", {
+                owner: owner,
+                repo: repo,
+                branch: "main",
+                headers: {
+                    "x-github-api-version": "2022-11-28",
+                },
+                required_status_checks: null,
+                enforce_admins: null,
+                required_pull_request_reviews: {
+                    dismiss_stale_reviews: true,
+                    require_code_owner_reviews: true,
+                    required_approving_review_count: 1,
+                    allow_teams: true,
+                },
+                restrictions: null,
+                required_linear_history: true,
+                allow_force_pushes: false,
+                allow_deletions: false,
+            });
+
+            await octokit.request("POST /repos/{owner}/{repo}/issues", {
+                owner: owner,
+                repo: repo,
+                title: "Main branch protection",
+                body: `@${owner}, the main branch has been protected with the following settings:\n\n- Require linear history: true\n- Allow force pushes: false\n- Allow deletions: false\n- Require pull request reviews: true\n- Dismiss stale pull request approvals when new commits are pushed: true\n- Require review from Code Owners: true\n- Required approving reviews: 1\n- Allow teams: true`,
+            });
+        }
+        else {
+            await octokit.request("PUT /repos/{owner}/{repo}/branches/{branch}/protection", {
+                owner: owner,
+                repo: repo,
+                branch: "main",
+                headers: {
+                    "x-github-api-version": "2022-11-28",
+                },
+                required_status_checks: null,
+                enforce_admins: null,
+                required_pull_request_reviews: null,
+                restrictions: null,
+                required_linear_history: true,
+                allow_force_pushes: false,
+                allow_deletions: false,
+            });
+
+            // Create a new issue outlining the protections
+            await octokit.request("POST /repos/{owner}/{repo}/issues", {
+                owner: owner,
+                repo: repo,
+                title: "Main branch protection",
+                body: `@${owner}, the main branch has been protected with the following settings:\n\n- Require linear history: true\n- Allow force pushes: false\n- Allow deletions: false`,
+            });
+        }
         
-        // Create a new issue outlining the protections
-        await octokit.request("POST /repos/{owner}/{repo}/issues", {
-            owner: owner,
-            repo: repo,
-            title: "Main branch protection",
-            body: `@${owner}, the main branch has been protected with the following settings:\n\n- Require linear history: true\n- Allow force pushes: false\n- Allow deletions: false`,
-        });
+        console.log(`Successfully protected the main branch of ${payload.repository.full_name} and created a new issue`);
+
     } catch (error) {
         if (error.response) {
             console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`)
