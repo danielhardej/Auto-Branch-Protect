@@ -43,7 +43,12 @@ async function handleRepoCreated({ octokit, payload }) {
                     required_approving_review_count: 1,
                     allow_teams: true,
                 },
-                restrictions: null,
+                restrictions: {
+                    users: [],
+                    teams: [],
+                    apps: [],
+                
+                },
                 required_linear_history: true,
                 allow_force_pushes: false,
                 allow_deletions: false,
@@ -65,9 +70,20 @@ async function handleRepoCreated({ octokit, payload }) {
                     "x-github-api-version": "2022-11-28",
                 },
                 required_status_checks: null,
+                required_conversation_resolution: true,
                 enforce_admins: null,
-                required_pull_request_reviews: null,
-                restrictions: null,
+                required_pull_request_reviews: {
+                    dismiss_stale_reviews: true,
+                    require_code_owner_reviews: true,
+                    required_approving_review_count: 0,
+                    allow_teams: true,
+                },
+                restrictions: {
+                    users: [],
+                    teams: [],
+                    apps: [],
+                
+                },
                 required_linear_history: true,
                 allow_force_pushes: false,
                 allow_deletions: false,
@@ -78,7 +94,7 @@ async function handleRepoCreated({ octokit, payload }) {
                 owner: owner,
                 repo: repo,
                 title: "Main branch protection",
-                body: `@${owner}, the main branch has been protected with the following settings:\n\n- Require linear history: true\n- Allow force pushes: false\n- Allow deletions: false`,
+                body: `@${owner}, the main branch has been protected with the following settings:\n\n- Require linear history: true\n- Require conversation resolution: true\n- Allow force pushes: false\n- Allow deletions: false`,
             });
 
             // assign issue to the owner of the repository
