@@ -21,6 +21,12 @@ So instead I created a GitHub App that listens for the `repository.created` even
 
 When the event is received, we use the GitHub API to protect the main branch and then create an issue in the repository.
 
+## Running the App
+
+
+
+## Writing the Code and Building the App
+
 ### The Webhook URL
 
 In developing the app, we use https://smee.io/ to create a webhook URL. This URL is used to receive events from GitHub. The URL is then added to the GitHub App settings.
@@ -31,8 +37,6 @@ A secure webhook secret is generated with the Python command:
 import secrets
 secrets.token_hex(16)
 ```
-
-## Writing the Code
 
 ### Installing dependencies
 
