@@ -42,12 +42,7 @@ async function handleRepoCreated({ octokit, payload }) {
             },
             required_status_checks: null,
             enforce_admins: null,
-            required_pull_request_reviews: {
-                dismissal_restrictions: {},
-                dismiss_stale_reviews: true,
-                require_code_owner_reviews: false,
-                required_approving_review_count: 1
-            },
+            required_pull_request_reviews: null,
             restrictions: null,
             required_linear_history: true,
             allow_force_pushes: false,
@@ -59,7 +54,7 @@ async function handleRepoCreated({ octokit, payload }) {
             owner: owner,
             repo: repo,
             title: "Main branch protection",
-            body: `@${owner}, the main branch has been protected with the following settings:\n\n- Require pull request reviews: true\n- Require linear history: true\n- Allow force pushes: false\n- Allow deletions: false`,
+            body: `@${owner}, the main branch has been protected with the following settings:\n\n- Require linear history: true\n- Allow force pushes: false\n- Allow deletions: false`,
         });
     } catch (error) {
         if (error.response) {
