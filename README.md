@@ -1,18 +1,22 @@
 # Auto-Branch-Protect
 
+### [Install the GitHub App](https://github.com/apps/autobranchprotect)
+
 ## A GitHub App to automatically protect the main branches in an organisation's repos.
 
 ### GitHub API Challenge
 
-GitHub has a powerful API that enables developers to easily access GitHub data. Companies often ask us to craft solutions to their specific problems. A common request we receive is for branches to be automatically protected upon creation.
+The challenge description is as follows:
 
-In this project, we create a simple web service that listens for organization events to know when a repository has been created. When the repository is created, please automate the protection of the main branch. Notify yourself with an @mention in an issue within the repository that outlines the protections that were added.
+> GitHub has a powerful API that enables developers to easily access GitHub data. Companies often ask us to craft solutions to their specific problems. A common request we receive is for branches to be automatically protected upon creation.
+>
+> In this project, we create a simple web service that listens for organization events to know when a repository has been created. When the repository is created, please automate the protection of the main branch. Notify yourself with an @mention in an issue within the repository that outlines the protections that were added.
 
 ### Solving the Problem
 
 My initial thought was to use a GitHub Action to protect the main branch.
 
-However, this had to pitfalls: 
+However, this had two pitfalls:
 
  1. GitHub Actions are not triggered by the `repository.created` event.
  2. The Action would not exist in the repository by default, unless a template repository was used.
@@ -23,7 +27,23 @@ When the event is received, we use the GitHub API to protect the main branch and
 
 ## Running the App
 
+1. Install the app using the public link: https://github.com/apps/autobranchprotect
 
+2. Open a Codespace or clone the repository and run the app locally. For now, will use our computer or codespace as a server.
+
+3. Start the app server with the following command in the terminal in your Codespace or computer:
+
+```bash
+npx smee -u https://smee.io/ZWyucxpozGme49M t http://localhost:3000/api/webhook
+```
+
+4. In a new terminal window, run the app:
+
+```bash
+npm run server
+```
+
+5. Test it out! While your Codespace is open and the app server is running, [create a new repository](https://github.com/new) in the account in which the app is installed to check the app is working.
 
 ## Writing the Code and Building the App
 
