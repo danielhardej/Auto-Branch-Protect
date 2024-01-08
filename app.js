@@ -42,13 +42,18 @@ async function handleRepoCreated({ octokit, payload }) {
             },
             required_status_checks: null,
             enforce_admins: null,
-            required_pull_request_reviews: true,
+            required_pull_request_reviews: {
+                dismissal_restrictions: {},
+                dismiss_stale_reviews: true,
+                require_code_owner_reviews: false,
+                required_approving_review_count: 1
+            },
             restrictions: null,
             required_linear_history: true,
             allow_force_pushes: false,
             allow_deletions: false,
         });
-
+        
         // Create a new issue outlining the protections
         await octokit.request("POST /repos/{owner}/{repo}/issues", {
             owner: owner,
