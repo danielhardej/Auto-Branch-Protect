@@ -4,7 +4,13 @@
 
 #### A GitHub App to automatically protect the main branches in an organisation's repos.
 
+<p align="center">
+  <img src="https://github.com/danielhardej/Auto-Branch-Protect/assets/19962342/60cf7102-7aa1-41cf-baf7-6561c6781658" alt="bouncer cat protect branch">
+</p>
+
 ## How to use it
+
+It's easy! All you need to do is:
 
 1. Install the GitHub app on your organisation's account.
 2. Create a new repository in your organisation (make sure you initialise the new repository with a README.md!)
