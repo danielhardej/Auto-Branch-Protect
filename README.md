@@ -1,88 +1,46 @@
-# Auto-Branch-Protect
+# Auto Branch Protect
 
 ### [Install the GitHub App](https://github.com/apps/autobranchprotect)
 
-## A GitHub App to automatically protect the main branches in an organisation's repos.
+#### A GitHub App to automatically protect the main branches in an organisation's repos.
 
-### GitHub API Challenge
+## How to use it
 
-The challenge description is as follows:
+1. Install the GitHub app on your organisation's account.
+2. Create a new repository in your organisation (make sure you initialise the new repository with a README.md!)
+3. The GitHub app will automatically create a branch protection rule for the main branch of each new repository under your organisation.
+4. The app will also automatically create an issue in the new repository, tagging the org admins and notifying them of the new branch protection rules.
 
-> GitHub has a powerful API that enables developers to easily access GitHub data. Companies often ask us to craft solutions to their specific problems. A common request we receive is for branches to be automatically protected upon creation.
->
-> In this project, we create a simple web service that listens for organization events to know when a repository has been created. When the repository is created, please automate the protection of the main branch. Notify yourself with an @mention in an issue within the repository that outlines the protections that were added.
+## The branch protection rules
 
-### Solving the Problem
+The default branch protection rules are as follows:
 
-My initial thought was to use a GitHub Action to protect the main branch.
+- Require pull request reviews before merging into `main`
+- Dismiss stale pull request approvals when new commits are pushed
+- Require review from Code Owners
+- Require status checks to pass before merging
+- Require branches to be up to date before merging
+- Require linear history
+- Do not allow deletions
 
-However, this had two pitfalls:
+## Top 3 Gotchas
 
- 1. GitHub Actions are not triggered by the `repository.created` event.
- 2. The Action would not exist in the repository by default, unless a template repository was used.
+1. **READMEs:** Always initialise your new repo with a README.md file. Otherwise, there are no branches to protect!
+2. **Private repositories are only for Team plans:** Make sure your organisation is on a [team plan](https://github.com/pricing) if you're creating a private repository. Otherwise, you won't be able to create a branch protection rule or assign reviewers for pull requests!
+3. **Permissions:** Make sure you have the correct permissions to install the GitHub app on your organisation's account. You'll need to be an organisation owner or have admin permissions.
 
-So instead I created a GitHub App that listens for the `repository.created` event.
+## How it works
 
-When the event is received, we use the GitHub API to protect the main branch and then create an issue in the repository.
+The GitHub app is written in Node.js and uses GitHub webhooks and the [Octokit](https://github.com/octokit/octokit.js) library to interact with the GitHub API.
 
-## Running the App
+The app uses Azure functions, which are triggered by GitHub webhooks, to create a branch protection rule for the main branch of each new repository under your organisation via the GitHub API. The GitHub API is also used to create an issue in the new repository, tagging the org admins and notifying them of the new branch protection settings that were changed (or providing a reason why the branch protections failed, if not.) 
 
-1. Install the app using the public link: https://github.com/apps/autobranchprotect
-
-2. Open a Codespace or clone the repository and run the app locally. For now, will use our computer or codespace as a server.
-
-3. Start the app server with the following command in the terminal in your Codespace or computer:
-
-```bash
-npx smee -u https://smee.io/ZWyucxpozGme49M -t http://localhost:3000/api/webhook
-```
-
-4. In a new terminal window, run the app:
-
-```bash
-npm run server
-```
-
-5. Test it out! While your Codespace is open and the app server is running, [create a new repository](https://github.com/new) in the account in which the app is installed to check the app is working.
-
-## Writing the Code and Building the App
-
-### The Webhook URL
-
-In developing the app, we use https://smee.io/ to create a webhook URL. This URL is used to receive events from GitHub. The URL is then added to the GitHub App settings.
-
-A secure webhook secret is generated with the Python command:
-
-```bash
-import secrets
-secrets.token_hex(16)
-```
-
-### Installing dependencies
-
-This app uses NPM and GitHub's Octokit module to handle webhook events and make API requests.
-
-We install dependencies with the following steps:
-
-1. Create a `package.json` file using the npm defaults.
-
-```
-npm init --yes
-```
-
-2. Install Octokit:
-
-```
-npm install octokit
-```
-
-3. dotenv module to read information about your app from a .env file:
-```
-npm install dotenv
-```
+99% of the time, the branch protection rules are created with no problems. If an error occurs, it's almost always due to one of the three gotchas mentioned above and an issue will be created telling you what went wrong.
 
 ## References:
 
+- [Monitor GitHub events by using a webhook with Azure Functions](https://learn.microsoft.com/en-gb/training/modules/monitor-github-events-with-a-function-triggered-by-a-webhook/)
+- [Azure Functions HTTP triggers and bindings overview](https://docs.microsoft.com/en-us/azure/azure-functions/functions-create-github-webhook-triggered-function)
 - [Building a GitHub App that responds to webhook events](https://docs.github.com/en/apps/creating-github-apps/writing-code-for-a-github-app/building-a-github-app-that-responds-to-webhook-events)
 - [SMEE Client](https://smee.io/)
 - [Octokit](https://github.com/octokit/octokit.js/#readme)

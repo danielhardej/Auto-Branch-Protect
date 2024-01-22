@@ -17,16 +17,11 @@ const app = new App({
   },
 });
 
-// This function will create branch protections for the main branch of a repository when it is created and create a new issue with a message
-// describing the protections that have been applied
 async function handleRepoCreated({ octokit, payload }) {
     console.log(`Received a repository creation event for ${payload.repository.full_name}`);
-
     const owner = payload.repository.owner.login;
     const repo = payload.repository.name;
-
     try {
-        // Protect the main branch of the repository
         if (payload.repository.owner.type === "Organization") {
             await octokit.request("PUT /repos/{owner}/{repo}/branches/{branch}/protection", {
                 owner: owner,
@@ -83,16 +78,12 @@ async function handleRepoCreated({ octokit, payload }) {
                 allow_force_pushes: false,
                 allow_deletions: false,
             });
-
-            // Create a new issue outlining the protections
             await octokit.request("POST /repos/{owner}/{repo}/issues", {
                 owner: owner,
                 repo: repo,
                 title: "Main branch protection",
                 body: `@${owner}, the main branch has been protected with the following settings:\n\n- Require linear history: true\n- Require conversation resolution: true\n- Allow force pushes: false\n- Allow deletions: false`,
             });
-
-            // assign issue to the owner of the repository
             await octokit.request("POST /repos/{owner}/{repo}/issues/{issue_number}/assignees", {
                 owner: owner,
                 repo: repo,
@@ -123,7 +114,7 @@ app.webhooks.onError((error) => {
 
 const port = 3000;
 const host = 'localhost';
-const path = "/api/webhook";
+const path = ;
 const localWebhookUrl = `http://${host}:${port}${path}`;
 
 const middleware = createNodeMiddleware(app.webhooks, {path});
