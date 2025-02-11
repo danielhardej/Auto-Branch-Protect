@@ -1,4 +1,4 @@
-# Auto Branch Protect
+# Branch Guardian
 
 ### [Install the GitHub App](https://github.com/apps/autobranchprotect)
 
