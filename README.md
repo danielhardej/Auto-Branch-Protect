@@ -1,6 +1,6 @@
 # Branch Guardian
 
-### [Install the GitHub App](https://github.com/apps/autobranchprotect)
+### [Install the GitHub App](https://github.com/marketplace/branch-guardian)
 
 #### A GitHub App to automatically protect the main branches in an organisation's repos.
 
