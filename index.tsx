@@ -13,13 +13,11 @@ app.post("/", async (c) => {
   const installationId = body.installation.id;
 
   if (!githubEvent) {
-    return c.json({ error: "Missing GitHub event header" }, 400);
+    return c.json("Missing GitHub event header", 400);
   }
 
   if (body.action === "created") {
-    console.log(
-      "Repository creation event received for: " + body.repository.full_name
-    );
+    console.log("Repository creation event received");
 
     const octokit = new Octokit({
       authStrategy: createAppAuth,
@@ -70,9 +68,9 @@ app.post("/", async (c) => {
         await octokit.rest.issues.create({
           owner: owner,
           repo: repo,
-          title: "Main branch protections",
+          title: "[UPDATE] Main branch protections",
           body:
-            `Hi admins ${admins}!,\n This new repository was created by ${sender}.\n` +
+            `Hi admins ${admins}!,\n This new repository was created by @${sender}.\n` +
             `The main branch has automatically been protected with the following settings:\n\n` +
             `- [x] Require linear history: true\n` +
             `- [x] Allow force pushes: false\n` +
@@ -90,6 +88,20 @@ app.post("/", async (c) => {
       }
     } catch (error) {
       console.error(`Error updating branch protection: ${error}`);
+      try {
+        await octokit.rest.issues.create({
+          owner: owner,
+          repo: repo,
+          title: "[WARNING] Main branch unprotected",
+          body: `Hi admins (${admins})!,\n\n This new repository was created by @${sender}, but **the main branch has not been automatically been protected!**\n\n` +
+                `Reason:\n\n ${error}\n\n` +
+                `**Please remember to protect your main branch!**` +
+                `View your branch protection settings here: https://github.com/${body.repository.full_name}/settings/branches`,
+      });
+        console.log("Warning issue successfully created.")
+      } catch (error) {
+        console.error(`Error creating issue: ${error}`);
+      }
     }
   } else {
     console.log(
